@@ -29,12 +29,13 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal.h"
 
+#include "stm32f3xx_ll_usart.h"
+#include "stm32f3xx_ll_rcc.h"
 #include "stm32f3xx_ll_system.h"
 #include "stm32f3xx_ll_gpio.h"
 #include "stm32f3xx_ll_exti.h"
 #include "stm32f3xx_ll_bus.h"
 #include "stm32f3xx_ll_cortex.h"
-#include "stm32f3xx_ll_rcc.h"
 #include "stm32f3xx_ll_utils.h"
 #include "stm32f3xx_ll_pwr.h"
 #include "stm32f3xx_ll_dma.h"
@@ -67,6 +68,22 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define AIR1_Pin LL_GPIO_PIN_0
+#define AIR1_GPIO_Port GPIOA
+#define AIR2_Pin LL_GPIO_PIN_1
+#define AIR2_GPIO_Port GPIOA
+#define AIR3_Pin LL_GPIO_PIN_3
+#define AIR3_GPIO_Port GPIOA
+#define AIR4_Pin LL_GPIO_PIN_4
+#define AIR4_GPIO_Port GPIOA
+#define AIR5_Pin LL_GPIO_PIN_5
+#define AIR5_GPIO_Port GPIOA
+#define AIR6_Pin LL_GPIO_PIN_6
+#define AIR6_GPIO_Port GPIOA
+#define AIR7_Pin LL_GPIO_PIN_7
+#define AIR7_GPIO_Port GPIOA
+#define AIR8_Pin LL_GPIO_PIN_8
+#define AIR8_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
