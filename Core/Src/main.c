@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "can.h"
+#include "dma.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -57,6 +58,19 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+    huart2.gState = HAL_UART_STATE_READY;
+}
+
+uint8_t UART2_RX_Buffer[8];
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == USART2)
+    {
+    	HAL_UART_Receive_DMA(&huart2, UART2_RX_Buffer, 8);
+    }
+}
 
 /* USER CODE END 0 */
 
@@ -66,6 +80,7 @@ void SystemClock_Config(void);
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 	setbuf(stdout, NULL);
 
@@ -89,10 +104,16 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_CAN_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  printf("Boot NUCLEO\r\n");
+  printf("Type any key.\r\n");
+  printf("Then toggle LED each 8 letters.\r\n");
+
+  HAL_UART_Receive_DMA(&huart2, UART2_RX_Buffer, 8);
 
   /* USER CODE END 2 */
 
@@ -103,12 +124,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  printf("Hello, World!\r\n");
-	  LL_GPIO_TogglePin(AIR1_GPIO_Port, AIR1_Pin);
-	  LL_GPIO_TogglePin(AIR2_GPIO_Port, AIR2_Pin);
-	  LL_GPIO_TogglePin(AIR3_GPIO_Port, AIR3_Pin);
-	  LL_GPIO_TogglePin(AIR4_GPIO_Port, AIR4_Pin);
-	  LL_mDelay(500);
+	  HAL_UART_Transmit(&huart2, UART2_RX_Buffer, 8, 10);
+	  printf("\r\n");
+	  LL_mDelay(100);
   }
   /* USER CODE END 3 */
 }
@@ -159,10 +177,19 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+/*
 void __io_putchar(uint8_t c)
 {
 	LL_USART_TransmitData8(USART2, c);
 	while (LL_USART_IsActiveFlag_TXE(USART2) == 0);
+}
+*/
+
+int _write(int file, char *ptr, int len)
+{
+	while (huart2.gState != HAL_UART_STATE_READY) {}
+	HAL_UART_Transmit_DMA(&huart2, (uint8_t *)ptr, len);
+	return len;
 }
 
 /* USER CODE END 4 */
